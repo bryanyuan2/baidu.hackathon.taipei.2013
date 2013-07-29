@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
+	<link rel="stylesheet" href="css/baidu.css" />
+	<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <script src="http://connect.facebook.net/zh_TW/all.js"></script>
+	<script src="js/jquery.mobile-1.2.0.min.js"></script>
+	<script src="js/countto.js"></script>
+	<title>Baidu Hackathon Taipei 2013 - Captain</title>
+</head>
+<body>
+<div data-role="page">
+	<div data-role="header">
+		<h1>
+			<a target="_blank" href="http://www.baidu.com/">
+				<img id="dev_firefox" src="img/baidu_logo_header.png" />
+			</a>
+			Captain 2013
+		</h1>
+	</div>
+	
+	<div data-role="navbar">
+		<ul>
+			<li><a href="/">百度地球超人</a></li>
+			<li><a href="/rank">超人排行榜</a></li>
+		</ul>
+	</div>
+	<div id="dev_msgbox" data-role="content">	
+		
+		<div id="dev_container">
+			<div id="fb-root"></div>
+			<div id="dev_container_title">遵命，我是百度地球超人</div>
+			<div id="dev_container_description">您尚未登入</div>
+			<span id="fb_score" class="score">?</span>
+			<span class="score" >分</span>
+			<span class="extra_score" ></span>
+			<span class="extra_const" > extra</span>
+			<div id="fb_login_section">
+        		<input id="fb_login" type="button" value="登入臉書" />
+        	</div>
+			<div id="user_latlng">
+        		您目前所在的位置為：<span id="get_my_latlng"></span>
+        	</div>
+
+
+        	<div class="social_share">
+				<a title="Share to Plurk" href="javascript:void(window.open('http://www.plurk.com/?qualifier=shares&status='.concat(encodeURIComponent('http://baiduhackday.duapp.com')).concat(' ').concat('(').concat(encodeURIComponent('百度地球超人，從你的打卡足跡 幫你計算你被污染的程度；如果你接近污染源 也會有超人挺身而出 警告你不要靠近')).concat(')')));">
+					<img title="share" src="img/plurk_share.png" width="97" height="20" align="absmiddle" border="0" />
+				</a>
+				&nbsp;&nbsp;
+				<a href="#" 
+				  onclick="
+				    window.open(
+				      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent('http://baiduhackday.duapp.com/'), 
+				      'facebook-share-dialog', 
+				      'width=626,height=436'); 
+				    return false;">
+				  <span class="share_text">Share on Facebook</span>
+				</a>
+			</div>
+
+		</div>
+	</div>
+
+	<ul id="checkins_pool" data-role="listview">
+		<!--<li><a href="acura.html">Acura</a></li>-->
+	</ul>
+
+</div>
+
+<script>
+$(document).ready(function() {
+
+	$(".social_share").hide();
+	$(".extra_const").hide();
+
+	if("geolocation" in navigator) {
+	  navigator.geolocation.getCurrentPosition(
+	    function(position) {
+	        console.log(position.coords.latitude);
+	        console.log(position.coords.longitude);
+
+	        $("#get_my_latlng").text("").text(position.coords.longitude + " ," + position.coords.latitude);
+	    },
+	    function(error) {},
+	    {enableHighAccuracy: true}
+	  );
+	}
+
+	var const_baidu_url = "baiduhackday.duapp.com/score";
+
+	var g_lat_ary = [];
+	var g_lng_ary = [];
+	var g_created_time = [];
+	var g_city = [];
+	var g_country = [];
+	var g_name = [];
+	var g_counter = 0;
+	var g_total_checkins_score = 0;
+
+	var white_list_val = 0;
+	var username = "";
+
+
+	var white_list = ["捷運", "火車", "高鐵", "公車", "客運", "巴士"];
+
+	FB.init({ appId: '1403791189834892',
+	    channelUrl : 'http://127.0.0.1/channel.html',
+	    status: true,
+	    cookie: true,
+	    xfbml: true,
+	    oauth: true
+	});
+
+	var uid = "";
+	var access_token = "";
+
+	$("#fb_login").click(function () {
+	        FB.login(function (response) {
+	        //console.log(response);
+	        FB.getLoginStatus(function (response) {
+	        if (response.status === 'connected') {
+	                guid = response.authResponse.userID;
+	                gat = response.authResponse.accessToken;
+	                $("#uid").html("UID：" + guid);
+	                $("#access_token").html("accessToken：" + gat);
+	                uid = guid
+	                access_token = gat
+	        } else if (response.status === 'not_authorized') {
+	                alert("請允許授權！");
+	        } else {
+	        }
+	        });
+	        }, { scope: "email, user_checkins" });
+
+
+	        FB.api('/me', function(response) {
+	         	//console.log(response.name);
+	         	$("#dev_container_description").text("").text("Hi, " + response.name);
+	         	$("#fb_login_section").fadeOut();
+
+	         	username = response.name;
+
+		     	// checkins
+		        FB.api('/me/checkins', function(response) {
+		         console.log(response);
+		         for (var i in response)
+		         {
+		            for (var j in response[i])
+		            {   try
+		                {
+		                  //console.log(response[i][j]['place']['location']['city']);
+		                  //console.log(response[i][j]['place']['location']['country']);
+		                  //g_country.push(response[i][j]['place']['location']['country']);
+		                  //g_city.push(response[i][j]['place']['location']['city']);
+		                  
+		                  //console.log(response[i][j]['created_time']);
+		                  //console.log(response[i][j]['place']['location']['latitude']);
+		                  //console.log(response[i][j]['place']['location']['longitude']);
+		                  g_lat_ary.push(response[i][j]['place']['location']['latitude']);
+		                  g_lng_ary.push(response[i][j]['place']['location']['longitude']);
+		                  g_created_time.push(response[i][j]['created_time']);
+
+		                  if (response[i][j]['place']['name'])
+		                  {
+		                  	var white_list_bool = false;
+		                  	g_name.push(response[i][j]['place']['name']);
+		            		//$("#checkins_pool").append("<li><a href='#'>" + response[i][j]['place']['name'] + "</a></li>");
+
+		            		
+		            		for(var k=0;k<white_list.length;k++)
+		            		{
+		            			if (response[i][j]['place']['name'].indexOf(white_list[k])!=-1)
+		            			{
+		            				white_list_bool = true;
+		            				white_list_val = white_list_val + 100;
+		            			}
+		            		}
+
+		            		if (white_list_bool == true)
+		            		{
+		            			$("#checkins_pool").append("<li data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='list_li ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-last ui-btn-up-c extra_li'><div class='ui-btn-inner ui-li'><div class='ui-btn-text'><img src='http://api.map.baidu.com/staticimage?center=" + response[i][j]['place']['location']['longitude'] + "," + response[i][j]['place']['location']['latitude'] + "&width=100&height=100&zoom=8' class='ui-li-thumb'><a target='_blank' href='http://map.baidu.com/?latlng=" + response[i][j]['place']['location']['latitude'] + "," + response[i][j]['place']['location']['longitude'] + "&title=" + response[i][j]['place']['name'] + "&content=" + "Baidu Hackathon Taipei 2013 百度地球超人" + "&autoOpen=true'" + "' class='ui-link-inherit'><h3 class='ui-li-heading list_text'>" + response[i][j]['place']['name'] + "<span class='list_latlng_title'>( " + response[i][j]['place']['location']['city']  + ", " + response[i][j]['place']['location']['country'] + " ) - " + response[i][j]['created_time'] + "</span><span class='list_extra'> (extra + " + white_list_val + ")</span></h3></a></div><span class='ui-icon ui-icon-arrow-r ui-icon-shadow'>&nbsp;</span></div></li>");
+		            		}
+		            		else
+		            		{
+		            			$("#checkins_pool").append("<li data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='list_li ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-last ui-btn-up-c'><div class='ui-btn-inner ui-li'><div class='ui-btn-text'><img src='http://api.map.baidu.com/staticimage?center=" + response[i][j]['place']['location']['longitude'] + "," + response[i][j]['place']['location']['latitude'] + "&width=100&height=100&zoom=8' class='ui-li-thumb'><a target='_blank' href='http://map.baidu.com/?latlng=" + response[i][j]['place']['location']['latitude'] + "," + response[i][j]['place']['location']['longitude'] + "&title=" + response[i][j]['place']['name'] + "&content=" + "Baidu Hackathon Taipei 2013 百度地球超人" + "&autoOpen=true'" + "' class='ui-link-inherit'><h3 class='ui-li-heading list_text'>" + response[i][j]['place']['name'] + "<span class='list_latlng_title'>( " + response[i][j]['place']['location']['city']  + ", " + response[i][j]['place']['location']['country'] + " ) - " + response[i][j]['created_time'] + "</span></h3></a></div><span class='ui-icon ui-icon-arrow-r ui-icon-shadow'>&nbsp;</span></div></li>");
+		            		}
+		            		
+		                  }
+		                  
+		                  g_counter++;
+		                }
+		                catch(error)
+		                {
+
+		                }
+		            }
+		         }
+
+		         var ajax_data_ary = new Array();
+		         var element_checkins = new Object();
+
+		         for (var i=0;i<g_counter;i++)
+		         {
+		            var element = new Object();
+		            element["date"] = g_created_time[i];
+		            element["lat"] = g_lat_ary[i];
+		            element["lng"] = g_lng_ary[i];
+
+		            var obj_ser = JSON.stringify(element);
+		            ajax_data_ary.push(obj_ser);
+		         }
+		         element_checkins["checkins"] = ajax_data_ary;
+		         
+		         //console.log(JSON.stringify(element_checkins));
+		         var json_checkins_feed = JSON.stringify(element_checkins);
+		         
+		         json_checkins_feed = json_checkins_feed.replace(/\\"/g,'"');
+				 json_checkins_feed = json_checkins_feed.replace(/\"\{/g,'{');
+				 json_checkins_feed = json_checkins_feed.replace(/\}\"/g,'}');
+
+		         console.log(json_checkins_feed);
+
+		         $.ajax({
+		            type: "GET", 
+		            url: "/score",
+		            data: {"p": json_checkins_feed, "username": username},
+		            success: function(data) {
+		              console.log(data);
+		              var obj = $.parseJSON(data);
+		              
+		              for(var i=0;i<obj.length;i++)
+		              {
+		              	g_total_checkins_score = g_total_checkins_score + obj[i]
+		              }
+
+		              $({countNum: $('#fb_score').text()}).animate({countNum: g_total_checkins_score}, {
+					  		duration: 5000,
+					  		easing:'linear',
+					  		step: function() {
+					    		$('#fb_score').text(Math.floor(this.countNum));
+					  		},
+					  		complete: function() {
+					  			$(".social_share").show();
+					  			if (white_list_val!=0)
+					  			{
+					  				$(".extra_score").hide();
+					  				$(".extra_score").text("").append("<span class=extra_score_total'>+" + white_list_val + "</span>").fadeIn();
+					  				$(".extra_const").fadeIn();
+					  			}
+					  		}
+					  });
+		              
+		            },
+		            error: function(data) {
+		            }
+		         });
+	        });
+
+
+			$("#fb_score").text("");
+
+	     });
+	});
+});
+	</script>
+
+</body>
+</html>

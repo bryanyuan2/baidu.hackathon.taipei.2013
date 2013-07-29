@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.2.0.min.js"></script>
+	<script src="js/countto.js"></script>
+	
+	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
+	<link rel="stylesheet" href="css/baidu.css" />
+	<title>Baidu Hackathon Taipei 2013 - Captain</title>
+</head>
+<body>
+<div data-role="page">
+	<div data-role="header">
+		<a href="/" data-icon="delete">返回</a>
+		<h1>
+			<a target="_blank" href="http://www.baidu.com/">
+				<img id="dev_firefox" src="img/baidu_logo_header.png" />
+			</a>
+			Captain 2013
+		</h1>
+	</div>
+	
+	<div data-role="navbar">
+		<ul>
+			<li><a href="/">百度地球超人</a></li>
+			<li><a href="/rank">超人排行榜</a></li>
+		</ul>
+	</div>
+	
+	<ul id="rank_pool" data-role="listview">
+	</ul>
+
+</div>
+
+<script>
+$(document).ready(function() {
+	$.ajax({
+	    type: "GET", 
+	    url: "/list",
+	    success: function(data) {
+	      console.log(data);
+	      data = data.replace(/\'/g,'');
+		  data = data.replace(/\[/g,'');
+	      var str = data.replace(/]/g,'');
+	      var ary_done = str.split(",")
+	      console.log(ary_done);
+
+	      for(var i=0;i<ary_done.length;i+=2)
+	      {
+	      	$("#rank_pool").append("<li data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='list_li ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-last ui-btn-up-c'><div class='ui-btn-inner ui-li'><div class='ui-btn-text'><a target='_blank' href='#' class='ui-link-inherit'><h3 class='ui-li-heading list_text'>" + ary_done[i] + "<span class='rank_score'>" + ary_done[i+1].replace(" ","") + "</span></h3></a></div><span class='ui-icon ui-icon-arrow-r ui-icon-shadow'>&nbsp;</span></div></li>");
+	      }
+	    },
+	    error: function(data) {
+
+	    }
+	});
+	      
+	 
+});
+</script>
+
+</body>
+</html>

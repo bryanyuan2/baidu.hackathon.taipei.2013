@@ -1,0 +1,161 @@
+body{
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #000000;
+}
+
+.score
+{
+	color: yellow;
+	font-size: 120px;
+	text-align: center;
+}
+
+.extra_score {
+	color: red;
+	font-size: 60px;
+	text-align: center;
+}
+
+.extra_const {
+	color: red;
+	font-size: 60px;
+	text-align: center;
+}
+#dev_msgbox
+{
+	background-image: url("http://0.baiduhackday.duapp.com/img/captain.png");
+	background-repeat:no-repeat;
+	background-position: center;
+	text-align : center;
+	background-color: #000000;
+	min-height: 400px;
+}
+#dev_container{
+	z-index: 10;
+	color: #FFFFFF;
+	font-size: 18px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	width: 100%;
+	min-height: 400px;
+	left: 0;
+	background-color: rgba(0,0,0,0.75);
+	top: 60%;
+	text-align: center;
+}
+
+#dev_container_title{
+	z-index: 20;
+	font-size: 22px;
+	color:#fff;
+	text-shadow:0px 0px 20px #00c6ff;
+}
+
+#dev_container_description{
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.list_created_time {
+	padding-top: 12px;
+}
+
+.list_latlng_title {
+	color: #888888;
+}
+
+.list_text {
+	padding-left: 120px;
+}
+
+
+.share_text {
+	font-size: 12px;
+}
+
+#user_latlng {
+	padding-top: 12px;
+}
+
+#get_my_latlng {
+	color: yellow;
+}
+
+.rank_score {
+	color: red;
+	margin-left: 24px;
+	padding: 6px 12px 6px 12px;
+
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.list_extra {
+	color: red;
+	text-align: center;
+	font-weight:bold;
+}
+/*
+	circle
+*/
+.circle {
+	background-color: rgba(0,0,0,0);
+	border:5px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-right:5px solid rgba(0,0,0,0);
+	border-left:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 35px #2187e7;
+	width:50px;
+	height:50px;
+	margin:0 auto;
+	-moz-animation:spinPulse 1s infinite ease-in-out;
+	-webkit-animation:spinPulse 1s infinite linear;
+}
+.circle1 {
+	background-color: rgba(0,0,0,0);
+	border:5px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-left:5px solid rgba(0,0,0,0);
+	border-right:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 15px #2187e7; 
+	width:30px;
+	height:30px;
+	margin:0 auto;
+	position:relative;
+	top:-50px;
+	-moz-animation:spinoffPulse 1s infinite linear;
+	-webkit-animation:spinoffPulse 1s infinite linear;
+}
+
+.extra_li {
+	background-color: green;
+}
+@-moz-keyframes spinPulse {
+	0% { -moz-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7;}
+	50% { -moz-transform:rotate(145deg); opacity:1; }
+	100% { -moz-transform:rotate(-320deg); opacity:0; }
+}
+@-moz-keyframes spinoffPulse {
+	0% { -moz-transform:rotate(0deg); }
+	100% { -moz-transform:rotate(360deg);  }
+}
+@-webkit-keyframes spinPulse {
+	0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7; }
+	50% { -webkit-transform:rotate(145deg); opacity:1;}
+	100% { -webkit-transform:rotate(-320deg); opacity:0; }
+}
+@-webkit-keyframes spinoffPulse {
+	0% { -webkit-transform:rotate(0deg); }
+	100% { -webkit-transform:rotate(360deg); }
+}
+
+@-webkit-keyframes animate-stripes { 
+	0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+
+@-moz-keyframes animate-stripes {
+	0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
